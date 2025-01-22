@@ -1,0 +1,8 @@
+dependencies/include/GL
+dependencies/include/GLFW
+dependencies/include/glm
+dependencies/library/libGLEW.2.2.0.dylib
+dependencies/library/libglfw.3.4.dylib
+main.dSYM
+main
+.DS_Store
