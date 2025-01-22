@@ -1,5 +1,7 @@
 #version 410 core
-layout(location = 0) in vec3 in_Position;
+in vec3 in_Position;
+uniform mat4 testMat;
 void main() {
-    gl_Position = vec4(in_Position, 1);
+    vec4 pos = vec4(in_Position, 1);
+    gl_Position = pos * testMat;
 }
