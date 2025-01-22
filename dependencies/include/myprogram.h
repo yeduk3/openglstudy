@@ -1,3 +1,5 @@
+// 아주대 신현준 교수님 toys.h 참고
+
 // 중복 include 방지. 최초 인클루드 시 선언되기 때문.
 #ifndef program_h
 #define program_h

@@ -66,13 +66,15 @@ int main()
     return 0;
 }
 
-Program program;
+Program program, program2;
 
 // VBO. 점 데이터(위치, 속성) 저장?
 GLuint vertexBufferObject = 0;
 // VAO. 점
 GLuint vertexArrayObject = 0;
 GLuint elementBuffer;
+
+GLuint elementBuffer2;
 
 void init(GLFWwindow *window)
 {
@@ -81,7 +83,7 @@ void init(GLFWwindow *window)
     // Data of vertices and elements which are composed of 3 vertices.
     std::vector<glm::vec3> vertices = {{-1, -1, 0}, {1, -1, 0}, {0, 1, 0}, {-0.5, 0, 0}, {0.5, 0, 0}, {0, -1, 0}, {-2, 1, 0}};
     // Make sth using 0, 3, 5-th vertex, 1, 2, 3-th vertex and ...
-    std::vector<glm::u16vec3> elements = {{0, 3, 5}, {1, 4, 5}, {2, 3, 4}, {6, 2, 5}};
+    std::vector<glm::u16vec3> elements = {{0, 3, 5}, {1, 4, 5}, {2, 3, 4}};
 
     // Create VAO
     glGenVertexArrays(1, &vertexArrayObject);
@@ -92,7 +94,7 @@ void init(GLFWwindow *window)
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
 
-    // 선택한 VAO의 0번 Attrib. 활성화 후에 정보 주입
+    // 선택한 VAO의 0번 Attrib. 활성화 후에 정보 주입. 바인드 된 VBO 정보를 VAO에 넣는 것임.
     glEnableVertexAttribArray(0);
     // glVertexAttribPointer(GLuint index, GLuint size, GLenum type, GLboolean normalized, GLsizei stride, const void *offset)
     glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
@@ -101,6 +103,15 @@ void init(GLFWwindow *window)
     glGenBuffers(1, &elementBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u16vec3) * elements.size(), elements.data(), GL_STATIC_DRAW);
+
+    // new program
+    program2.loadShader("shader.vert", "shader2.frag");
+    // vertex는 같은 점 사용.
+    std::vector<glm::u16vec3> elements2 = {{6, 2, 5}};
+
+    glGenBuffers(1, &elementBuffer2);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer2);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u16vec3) * elements2.size(), elements2.data(), GL_STATIC_DRAW);
 }
 
 void render(GLFWwindow *window)
@@ -115,12 +126,18 @@ void render(GLFWwindow *window)
     glClearColor(0, 0, 0.3, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // program 1 draw
     glUseProgram(program.programID);
     glBindVertexArray(vertexArrayObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
 
-    //
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, 0);
+
+    // program 2 draw
+    glUseProgram(program2.programID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer2);
+
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
 
     // swap front and back buffer
     glfwSwapBuffers(window);
