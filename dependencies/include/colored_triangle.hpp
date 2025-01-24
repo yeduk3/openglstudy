@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-#include "myprogram.h"
+#include "myprogram.hpp"
 
 #ifdef __APPLE__
 #include "OpenGL/gl.h"
@@ -28,7 +28,7 @@ namespace ctri
 
     GLuint elementBuffer2;
 
-    void triangleInit(GLFWwindow *window)
+    void init(GLFWwindow *window)
     {
         program.loadShader("triangle.vert", "triangle.frag");
 
@@ -58,7 +58,7 @@ namespace ctri
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u16vec3) * elements.size(), elements.data(), GL_STATIC_DRAW);
     }
 
-    void triangleRender(GLFWwindow *window)
+    void render(GLFWwindow *window)
     {
         int w, h;
         glfwGetFramebufferSize(window, &w, &h);

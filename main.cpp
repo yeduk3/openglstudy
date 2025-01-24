@@ -6,13 +6,16 @@
 
 #include <glm/glm.hpp>
 
-#include "myprogram.h"
+#include "myprogram.hpp"
 
-#include "basic_triangle.h"
-#include "colored_triangle.h"
+// #include "basic_triangle.hpp"      // btri
+// #include "colored_triangle.hpp"    // ctri
+#include "colored_triangle_3d.hpp" // ctri3d
 
 #include <iostream>
 #include <vector>
+
+using namespace ctri3d;
 
 int main()
 {
@@ -35,6 +38,11 @@ int main()
 #endif
 
     GLFWwindow *window = glfwCreateWindow(640, 480, "OpenGL Study", 0, 0);
+
+#ifdef CURSOR_POS_CALLBACK
+    glfwSetCursorPosCallback(window, cursorPosCallback);
+#endif
+
     glfwMakeContextCurrent(window);
 
     // 컨텍스트가 있어야 성공.
@@ -45,15 +53,13 @@ int main()
     }
 
     // 내가 만들 프로그램 초기 설정.
-    // btri::init(window);
-    ctri::triangleInit(window);
+    init(window);
 
     // 창 닫기 전까지,
     while (!glfwWindowShouldClose(window))
     {
         // 렌더링
-        // btri::render(window);
-        ctri::triangleRender(window);
+        render(window);
 
         // This function processes only those events that have already been received and then returns immediately. Processing events will cause the window and input callbacks associated with those events to be called.
         // 윈도우에 대한 조작도 포함하기에 안 적으면 렌더링 안 됨.
