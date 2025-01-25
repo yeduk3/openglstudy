@@ -149,7 +149,6 @@ namespace ctri3d
         GLuint viewMatLoc = glGetUniformLocation(program.programID, "viewMat");
         glUniformMatrix4fv(viewMatLoc, 1, GL_FALSE, glm::value_ptr(viewMat));
 #else
-
         eye = glm::rotate(rotateFactor, glm::vec3(1, 0, 0)) * glm::vec4(eye, 1.0f);
         glm::vec3 destination = glm::vec3(0, 0, 0);
         glm::vec3 to(glm::normalize(destination - eye));

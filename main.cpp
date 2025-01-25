@@ -9,13 +9,14 @@
 #include "myprogram.hpp"
 
 // #include "basic_triangle.hpp"      // btri
-// #include "colored_triangle.hpp"    // ctri
-#include "colored_triangle_3d.hpp" // ctri3d
+// #include "colored_triangle.hpp" // ctri
+// #include "colored_triangle_3d.hpp" // ctri3d
+#include "utah_teapot.hpp" // utah
 
 #include <iostream>
 #include <vector>
 
-using namespace ctri3d;
+using namespace utah;
 
 int main()
 {
@@ -41,6 +42,9 @@ int main()
 
 #ifdef CURSOR_POS_CALLBACK
     glfwSetCursorPosCallback(window, cursorPosCallback);
+#endif
+#ifdef SCROLL_CALLBACK
+    glfwSetScrollCallback(window, scrollCallback);
 #endif
 
     glfwMakeContextCurrent(window);
