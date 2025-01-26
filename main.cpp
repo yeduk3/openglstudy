@@ -11,12 +11,13 @@
 // #include "basic_triangle.hpp"      // btri
 // #include "colored_triangle.hpp" // ctri
 // #include "colored_triangle_3d.hpp" // ctri3d
-#include "utah_teapot.hpp" // utah
+// #include "utah_teapot.hpp" // utah
+#include "parallel_projection_test.hpp" // pptest
 
 #include <iostream>
 #include <vector>
 
-using namespace utah;
+using namespace pptest;
 
 int main()
 {
@@ -45,6 +46,10 @@ int main()
 #endif
 #ifdef SCROLL_CALLBACK
     glfwSetScrollCallback(window, scrollCallback);
+#endif
+
+#ifdef MOUSE_BUTTON_CALLBACK
+    glfwSetMouseButtonCallback(window, mouseButtonCallback);
 #endif
 
     glfwMakeContextCurrent(window);
