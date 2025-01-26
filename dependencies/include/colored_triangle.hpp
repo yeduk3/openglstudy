@@ -18,7 +18,7 @@
 namespace ctri
 {
 
-    Program program, program2;
+    mp::Program program, program2;
 
     // VBO. 점 데이터(위치, 속성) 저장?
     GLuint vertexBufferObject = 0;

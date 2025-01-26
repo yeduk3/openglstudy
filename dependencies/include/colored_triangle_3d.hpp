@@ -42,7 +42,7 @@ namespace ctri3d
     float cameraTheta = 0;
     float cameraPhi = 0;
 
-    Program program;
+    mp::Program program;
 
     // VBO. 점 데이터(위치, 속성) 저장?
     GLuint vertexBufferObject = 0;
