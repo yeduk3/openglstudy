@@ -102,7 +102,7 @@ namespace utah
 
         // std::vector<glm::u16vec3> elements;
 
-        object = loadObject("./newell_teaset/teacup.obj");
+        object = loadObject("./newell_teaset/teapot.obj");
 
         // VAO
         glGenVertexArrays(1, &vertexArrayObject);
@@ -145,9 +145,14 @@ namespace utah
         glBindVertexArray(vertexArrayObject);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element3Buffer);
 
-        glm::mat4 modelMat = glm::mat4(1);
+        // glm vector is column-major - so it should be transposed if i wanna expected translation operation.
+        glm::mat4 modelMat = glm::mat4({{1, 0, 0, 0},
+                                        {0, 1, 0, -1},
+                                        {0, 0, 1, 0},
+                                        {0, 0, 0, 1}});
         GLuint modelMatLoc = glGetUniformLocation(program.programID, "modelMat");
-        glUniformMatrix4fv(modelMatLoc, 1, GL_FALSE, glm::value_ptr(modelMat));
+        // Allow transpose because above expression is transposed.
+        glUniformMatrix4fv(modelMatLoc, 1, GL_TRUE, glm::value_ptr(modelMat));
 
         glm::mat4 rotateX = glm::rotate(cameraPhi, glm::vec3(1, 0, 0));
         glm::mat4 rotateY = glm::rotate(cameraTheta, glm::vec3(0, 1, 0));
