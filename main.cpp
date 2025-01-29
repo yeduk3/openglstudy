@@ -8,11 +8,11 @@
 
 #include "myprogram.hpp"
 
-// #include "basic_triangle.hpp"      // btri
-// #include "colored_triangle.hpp" // ctri
-// #include "colored_triangle_3d.hpp" // ctri3d
-// #include "utah_teapot.hpp" // utah
-#include "parallel_projection_test.hpp" // pptest
+// #include "renderers/basic_triangle.hpp"      // btri
+// #include "renderers/colored_triangle.hpp" // ctri
+// #include "renderers/colored_triangle_3d.hpp" // ctri3d
+// #include "renderers/utah_teapot.hpp" // utah
+#include "renderers/parallel_projection_test.hpp" // pptest
 
 #include <iostream>
 #include <vector>

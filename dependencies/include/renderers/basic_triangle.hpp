@@ -29,7 +29,7 @@ namespace btri
 
     void init(GLFWwindow *window)
     {
-        program.loadShader("shader.vert", "shader.frag");
+        program.loadShader("shaders/shader.vert", "shaders/shader.frag");
 
         // Data of vertices and elements which are composed of 3 vertices.
         std::vector<glm::vec3> vertices = {{-1, -1, 0}, {1, -1, 0}, {0, 1, 0}, {-0.5, 0, 0}, {0.5, 0, 0}, {0, -1, 0}, {-2, 1, 0}};

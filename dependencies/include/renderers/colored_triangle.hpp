@@ -30,7 +30,7 @@ namespace ctri
 
     void init(GLFWwindow *window)
     {
-        program.loadShader("triangle.vert", "triangle.frag");
+        program.loadShader("shaders/triangle.vert", "shaders/triangle.frag");
 
         float vertices[][6] = {{0.0, 0.5, 0.0, 1.0, 0.0, 0.0},
                                {-0.5, -0.5, 0.0, 0.0, 1.0, 0.0},
