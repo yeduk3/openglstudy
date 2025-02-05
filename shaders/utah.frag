@@ -15,9 +15,6 @@ out vec4 out_Color;
 void main() {
 
     // I = I_a * k_a + I_i(L . N)(k_d + k_s(R . V)^n)
-    // float slope = max(dot(lightDirection, normal), 0.0f);
-    // vec3 reflected = slope == 0.0f ? vec3(0,0,0) : 2 * slope * normal - lightDirection;
-    // float spec = max(dot(reflected, viewingDirection), 0.0f);
 
     vec3 l = lightPosition - worldPosition;
     vec3 L = normalize(l);

@@ -116,7 +116,7 @@ ObjData loadObject(const std::string prefix, const std::string objFileName)
         std::cerr << "No .obj file" << std::endl;
         return object;
     }
-    std::cout << "Read " << objFileName << std::endl;
+    std::cout << "Read " << prefix + objFileName << std::endl;
 
     std::vector<std::string> faces;
 
