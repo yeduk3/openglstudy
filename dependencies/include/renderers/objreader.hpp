@@ -18,6 +18,26 @@
 #include <string>
 #include <regex>
 
+struct MtlData
+{
+    std::string materialName;
+
+    glm::vec3 ambientColor;
+    glm::vec3 diffuseColor;
+    glm::vec3 specularColor;
+
+    MtlData(const std::string mName) : materialName(mName) {}
+
+    friend std::ostream &operator<<(std::ostream &os, const MtlData &mtl)
+    {
+        os << "Material Name: " << mtl.materialName << std::endl;
+        os << "Ambient: " << mtl.ambientColor.r << " " << mtl.ambientColor.g << " " << mtl.ambientColor.b << std::endl;
+        os << "Diffuse: " << mtl.diffuseColor.r << " " << mtl.diffuseColor.g << " " << mtl.diffuseColor.b << std::endl;
+        os << "Specular: " << mtl.specularColor.r << " " << mtl.specularColor.g << " " << mtl.specularColor.b;
+        return os;
+    }
+};
+
 struct ObjData
 {
     std::string materialFile = "";
@@ -31,11 +51,62 @@ struct ObjData
     std::vector<glm::vec3> normals;
     std::vector<glm::u16vec3> elements3;
     std::vector<glm::u16vec4> elements4;
+
+    std::vector<MtlData> materialData;
 };
 
-ObjData loadObject(const char *objFileName)
+void loadMtl(const std::string mtlFileName, ObjData *object)
 {
-    std::fstream file(objFileName);
+    std::fstream file(mtlFileName);
+    if (!file.is_open())
+    {
+        std::cerr << "No .mtl file" << std::endl;
+        return;
+    }
+    std::cout << "Read " << mtlFileName << std::endl;
+
+    std::string type;
+    while (!file.eof())
+    {
+        file >> type;
+        if (file.eof())
+            break;
+        else if (type == "newmtl")
+        {
+            std::string mName;
+            file >> mName;
+            object->materialData.push_back(MtlData(mName));
+        }
+        else if (type == "Ka")
+        {
+            float r, g, b;
+            file >> r >> g >> b;
+            object->materialData.back().ambientColor = {r, g, b};
+        }
+        else if (type == "Kd")
+        {
+            float r, g, b;
+            file >> r >> g >> b;
+            object->materialData.back().diffuseColor = {r, g, b};
+        }
+        else if (type == "Ks")
+        {
+            float r, g, b;
+            file >> r >> g >> b;
+            object->materialData.back().specularColor = {r, g, b};
+        }
+    }
+
+    std::cout << "Material Count: " << object->materialData.size() << std::endl;
+    for (auto m : object->materialData)
+    {
+        std::cout << m << std::endl;
+    }
+}
+
+ObjData loadObject(const std::string prefix, const std::string objFileName)
+{
+    std::fstream file(prefix + objFileName);
     ObjData object;
     if (!file.is_open())
     {
@@ -53,6 +124,7 @@ ObjData loadObject(const char *objFileName)
         if (type == "mtllib")
         {
             file >> object.materialFile;
+            loadMtl(prefix + object.materialFile, &object);
         }
         else if (type == "usemtl")
         {

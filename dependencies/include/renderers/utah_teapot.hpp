@@ -29,6 +29,10 @@
 #define SCROLL_CALLBACK
 #endif
 
+#ifndef KEY_CALLBACK
+#define KEY_CALLBACK
+#endif
+
 namespace utah
 {
 
@@ -51,6 +55,7 @@ namespace utah
 
     // VBO. 점 데이터(위치, 속성) 저장?
     GLuint vertexBufferObject = 0;
+    GLuint vertexNormalBufferObject = 0;
     // VAO. 점
     GLuint vertexArrayObject = 0;
 
@@ -92,17 +97,34 @@ namespace utah
         fovy = comparator::max(0.01f, comparator::min(fovy, PI - 0.01f));
     }
 
+    float lightIntensity = 120;
+    float intensityDelta = 10;
+    bool lightTurn = false;
+    glm::vec3 lightPosition(10, 10, 5);
+
+    void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+    {
+        if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+        {
+            lightIntensity += intensityDelta;
+        }
+        else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+        {
+            lightIntensity -= intensityDelta;
+        }
+        else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+        {
+            lightTurn = !lightTurn;
+        }
+    }
+
     ObjData object;
 
     void init(GLFWwindow *window)
     {
         program.loadShader("shaders/utah.vert", "shaders/utah.frag");
 
-        // std::vector<glm::vec3> vertices = {{0.2000, 0.0000, 2.70000}, {0.2000, -0.1120, 2.70000}, {0.1120, -0.2000, 2.70000}, {0.0000, -0.2000, 2.70000}, {1.3375, 0.0000, 2.53125}, {1.3375, -0.7490, 2.53125}, {0.7490, -1.3375, 2.53125}, {0.0000, -1.3375, 2.53125}, {1.4375, 0.0000, 2.53125}, {1.4375, -0.8050, 2.53125}, {0.8050, -1.4375, 2.53125}, {0.0000, -1.4375, 2.53125}, {1.5000, 0.0000, 2.40000}, {1.5000, -0.8400, 2.40000}, {0.8400, -1.5000, 2.40000}, {0.0000, -1.5000, 2.40000}, {1.7500, 0.0000, 1.87500}, {1.7500, -0.9800, 1.87500}, {0.9800, -1.7500, 1.87500}, {0.0000, -1.7500, 1.87500}, {2.0000, 0.0000, 1.35000}, {2.0000, -1.1200, 1.35000}, {1.1200, -2.0000, 1.35000}, {0.0000, -2.0000, 1.35000}, {2.0000, 0.0000, 0.90000}, {2.0000, -1.1200, 0.90000}, {1.1200, -2.0000, 0.90000}, {0.0000, -2.0000, 0.90000}, {-2.0000, 0.0000, 0.90000}, {2.0000, 0.0000, 0.45000}, {2.0000, -1.1200, 0.45000}, {1.1200, -2.0000, 0.45000}, {0.0000, -2.0000, 0.45000}, {1.5000, 0.0000, 0.22500}, {1.5000, -0.8400, 0.22500}, {0.8400, -1.5000, 0.22500}, {0.0000, -1.5000, 0.22500}, {1.5000, 0.0000, 0.15000}, {1.5000, -0.8400, 0.15000}, {0.8400, -1.5000, 0.15000}, {0.0000, -1.5000, 0.15000}, {-1.6000, 0.0000, 2.02500}, {-1.6000, -0.3000, 2.02500}, {-1.5000, -0.3000, 2.25000}, {-1.5000, 0.0000, 2.25000}, {-2.3000, 0.0000, 2.02500}, {-2.3000, -0.3000, 2.02500}, {-2.5000, -0.3000, 2.25000}, {-2.5000, 0.0000, 2.25000}, {-2.7000, 0.0000, 2.02500}, {-2.7000, -0.3000, 2.02500}, {-3.0000, -0.3000, 2.25000}, {-3.0000, 0.0000, 2.25000}, {-2.7000, 0.0000, 1.80000}, {-2.7000, -0.3000, 1.80000}, {-3.0000, -0.3000, 1.80000}, {-3.0000, 0.0000, 1.80000}, {-2.7000, 0.0000, 1.57500}, {-2.7000, -0.3000, 1.57500}, {-3.0000, -0.3000, 1.35000}, {-3.0000, 0.0000, 1.35000}, {-2.5000, 0.0000, 1.12500}, {-2.5000, -0.3000, 1.12500}, {-2.6500, -0.3000, 0.93750}, {-2.6500, 0.0000, 0.93750}, {-2.0000, -0.3000, 0.90000}, {-1.9000, -0.3000, 0.60000}, {-1.9000, 0.0000, 0.60000}, {1.7000, 0.0000, 1.42500}, {1.7000, -0.6600, 1.42500}, {1.7000, -0.6600, 0.60000}, {1.7000, 0.0000, 0.60000}, {2.6000, 0.0000, 1.42500}, {2.6000, -0.6600, 1.42500}, {3.1000, -0.6600, 0.82500}, {3.1000, 0.0000, 0.82500}, {2.3000, 0.0000, 2.10000}, {2.3000, -0.2500, 2.10000}, {2.4000, -0.2500, 2.02500}, {2.4000, 0.0000, 2.02500}, {2.7000, 0.0000, 2.40000}, {2.7000, -0.2500, 2.40000}, {3.3000, -0.2500, 2.40000}, {3.3000, 0.0000, 2.40000}, {2.8000, 0.0000, 2.47500}, {2.8000, -0.2500, 2.47500}, {3.5250, -0.2500, 2.49375}, {3.5250, 0.0000, 2.49375}, {2.9000, 0.0000, 2.47500}, {2.9000, -0.1500, 2.47500}, {3.4500, -0.1500, 2.51250}, {3.4500, 0.0000, 2.51250}, {2.8000, 0.0000, 2.40000}, {2.8000, -0.1500, 2.40000}, {3.2000, -0.1500, 2.40000}, {3.2000, 0.0000, 2.40000}, {0.0000, 0.0000, 3.15000}, {0.8000, 0.0000, 3.15000}, {0.8000, -0.4500, 3.15000}, {0.4500, -0.8000, 3.15000}, {0.0000, -0.8000, 3.15000}, {0.0000, 0.0000, 2.85000}, {1.4000, 0.0000, 2.40000}, {1.4000, -0.7840, 2.40000}, {0.7840, -1.4000, 2.40000}, {0.0000, -1.4000, 2.40000}, {0.4000, 0.0000, 2.55000}, {0.4000, -0.2240, 2.55000}, {0.2240, -0.4000, 2.55000}, {0.0000, -0.4000, 2.55000}, {1.3000, 0.0000, 2.55000}, {1.3000, -0.7280, 2.55000}, {0.7280, -1.3000, 2.55000}, {0.0000, -1.3000, 2.55000}, {1.3000, 0.0000, 2.40000}, {1.3000, -0.7280, 2.40000}, {0.7280, -1.3000, 2.40000}, {0.0000, -1.3000, 2.40000}};
-
-        // std::vector<glm::u16vec3> elements;
-
-        object = loadObject("./newell_teaset/teapot.obj");
+        object = loadObject("./newell_teaset/", "teapot.obj");
 
         // VAO
         glGenVertexArrays(1, &vertexArrayObject);
@@ -111,7 +133,7 @@ namespace utah
         // VBO for vertex data
         glGenBuffers(1, &vertexBufferObject);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-        // 24 vertices
+        // vertices
         glBufferData(GL_ARRAY_BUFFER, object.nVertices * sizeof(glm::vec3), object.vertices.data(), GL_STATIC_DRAW);
 
         // VAO attrib
@@ -121,12 +143,17 @@ namespace utah
         // Normalize "GL_FALSE", jump "3" per each data, start with "0"-th
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 
+        // normal
+        glGenBuffers(1, &vertexNormalBufferObject);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferObject);
+        glBufferData(GL_ARRAY_BUFFER, object.normals.size() * sizeof(glm::vec3), object.normals.data(), GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+
         glGenBuffers(1, &element3Buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element3Buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u16vec3) * object.nElements3, object.elements3.data(), GL_STATIC_DRAW);
-        // glGenBuffers(1, &element4Buffer);
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element4Buffer);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u16vec4) * object.nElements4, object.elements4.data(), GL_STATIC_DRAW);
     }
 
     void render(GLFWwindow *window)
@@ -147,7 +174,7 @@ namespace utah
 
         // glm vector is column-major - so it should be transposed if i wanna expected translation operation.
         glm::mat4 modelMat = glm::mat4({{1, 0, 0, 0},
-                                        {0, 1, 0, -1},
+                                        {0, 1, 0, 0},
                                         {0, 0, 1, 0},
                                         {0, 0, 0, 1}});
         GLuint modelMatLoc = glGetUniformLocation(program.programID, "modelMat");
@@ -165,6 +192,35 @@ namespace utah
         glm::mat4 projMat = glm::perspective(fovy, w / (float)h, 0.01f, 1000.0f);
         GLuint projMatLoc = glGetUniformLocation(program.programID, "projMat");
         glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, glm::value_ptr(projMat));
+
+        // Fragment Shader
+        GLuint eyePositionLoc = glGetUniformLocation(program.programID, "eyePosition");
+        GLuint lightPositionLoc = glGetUniformLocation(program.programID, "lightPosition");
+        GLuint lightColorLoc = glGetUniformLocation(program.programID, "lightColor");
+        GLuint ambientColorLoc = glGetUniformLocation(program.programID, "ambientColor");
+        GLuint specularColorLoc = glGetUniformLocation(program.programID, "specularColor");
+        GLuint diffuseColorLoc = glGetUniformLocation(program.programID, "diffuseColor");
+        GLuint shininessLoc = glGetUniformLocation(program.programID, "shininess");
+
+        glm::vec3 lightColor(lightIntensity);
+        if (lightTurn)
+        {
+            glm::mat4 lightRotation = glm::rotate(rotateFactor, glm::vec3(0, 1, 0));
+            lightPosition = lightRotation * glm::vec4(lightPosition, 1);
+        }
+        // glm::vec3 lightDirection = glm::normalize(lightPosition - glm::vec3(0, 0, 0));
+        glm::vec3 ambientColor = object.materialData.begin()->ambientColor;
+        glm::vec3 specularColor = object.materialData.begin()->specularColor;
+        glm::vec3 diffuseColor = object.materialData.begin()->diffuseColor;
+        float shininess = 1.4;
+
+        glUniform3fv(eyePositionLoc, 1, glm::value_ptr(eyePosition));
+        glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
+        glUniform3fv(lightPositionLoc, 1, glm::value_ptr(lightPosition));
+        glUniform3fv(ambientColorLoc, 1, glm::value_ptr(ambientColor));
+        glUniform3fv(specularColorLoc, 1, glm::value_ptr(specularColor));
+        glUniform3fv(diffuseColorLoc, 1, glm::value_ptr(diffuseColor));
+        glUniform1f(shininessLoc, shininess);
 
         // elements.size() * elements[0].size();
         glDrawElements(GL_TRIANGLES, object.nElements3 * 3, GL_UNSIGNED_SHORT, 0);
