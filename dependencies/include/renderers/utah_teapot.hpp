@@ -97,12 +97,17 @@ namespace utah
         fovy = comparator::max(0.01f, comparator::min(fovy, PI - 0.01f));
     }
 
+    // Up Down
     float lightIntensity = 120;
     float intensityDelta = 10;
+    // Space
     bool lightTurn = false;
     glm::vec3 lightPosition(10, 10, 5);
+    // Left Right
     float shininess = 12;
     float shininessDelta = 10;
+    // B
+    bool blinnPhong = false;
 
     void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
@@ -132,6 +137,14 @@ namespace utah
         {
             lightTurn = !lightTurn;
             std::cout << "lightPosition: (" << lightPosition.r << ", " << lightPosition.g << ", " << lightPosition.b << ")" << std::endl;
+        }
+        else if (key == GLFW_KEY_B && action == GLFW_PRESS)
+        {
+            blinnPhong = !blinnPhong;
+            if (blinnPhong)
+                std::cout << "Blinn-Phong Model Activated" << std::endl;
+            else
+                std::cout << "Phong Model Activated" << std::endl;
         }
     }
 
@@ -219,6 +232,8 @@ namespace utah
         GLuint diffuseColorLoc = glGetUniformLocation(program.programID, "diffuseColor");
         GLuint shininessLoc = glGetUniformLocation(program.programID, "shininess");
 
+        GLuint blinnPhongLoc = glGetUniformLocation(program.programID, "blinnPhong");
+
         glm::vec3 lightColor(lightIntensity);
         if (lightTurn)
         {
@@ -237,6 +252,8 @@ namespace utah
         glUniform3fv(specularColorLoc, 1, glm::value_ptr(specularColor));
         glUniform3fv(diffuseColorLoc, 1, glm::value_ptr(diffuseColor));
         glUniform1f(shininessLoc, shininess);
+
+        glUniform1i(blinnPhongLoc, blinnPhong);
 
         // elements.size() * elements[0].size();
         glDrawElements(GL_TRIANGLES, object.nElements3 * 3, GL_UNSIGNED_SHORT, 0);
