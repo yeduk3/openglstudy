@@ -29,3 +29,21 @@ Each header file has different namespace. You can test any of them by changing s
 2. Write only one `using namespace <name>`. You can check the distinct name of headers in each `~.hpp` files.
 
 3. Run!
+
+## Common features
+
+- Some file can rotate camera by `dragging` and modify fovy by `scrolling`
+
+## utah_teapot.hpp
+
+- `Up/Down arrow`: Increase/Decrease light intensity.
+
+- `Left/Right arrow`: Increase/Decrease shininess.
+
+- `Space`: Rotate the light position by y-axis.
+
+- `B`: Switch shading between **Phong lighting** and **Blinn-Phong lighting**.
+
+## parallel_projection_test.hpp
+
+- `Left Click`: Switch projection method between **Perspective** and **Parallel**.
