@@ -26,7 +26,7 @@ void main() {
     vec3 V = normalize(eyePosition - worldPosition);
     vec3 I = lightColor / dot(l, l);
 
-    vec3 ambient = vec3(0.02);
+    vec3 ambient = diffuseColor * vec3(0.02);
     vec3 diffuse = I * diffuseColor * max(dot(L, N), 0);
     vec3 specular = I * specularColor * pow(max(dot(R, V), 0), shininess);
 

@@ -45,10 +45,13 @@ struct ObjData
     GLuint nVertices = 0;
     GLuint nElements3 = 0;
     GLuint nElements4 = 0;
+    GLuint nNormals = 0;
+    GLuint nSyncedNormals = 0;
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> textures;
     std::vector<glm::vec3> normals;
+    std::vector<glm::vec3> syncedNormals;
     std::vector<glm::u16vec3> elements3;
     std::vector<glm::u16vec4> elements4;
 
@@ -115,6 +118,8 @@ ObjData loadObject(const std::string prefix, const std::string objFileName)
     }
     std::cout << "Read " << objFileName << std::endl;
 
+    std::vector<std::string> faces;
+
     std::string type;
     while (!file.eof())
     {
@@ -157,33 +162,10 @@ ObjData loadObject(const std::string prefix, const std::string objFileName)
         }
         else if (type == "f")
         {
-            // case by case?
-            std::vector<GLuint> elem;
-            std::string faces;
-            std::getline(file, faces);
+            std::string f;
+            std::getline(file, f);
 
-            std::regex re("\\d+/\\d+/\\d+");
-            auto start = std::sregex_iterator(faces.begin(), faces.end(), re);
-            auto end = std::sregex_iterator();
-            while (start != end)
-            {
-                elem.push_back(std::stoi(start->str()) - 1);
-                start++;
-            }
-
-            if (elem.size() == 4)
-            {
-                object.elements4.push_back({elem[0], elem[1], elem[2], elem[3]});
-                object.elements3.push_back({elem[0], elem[1], elem[2]});
-                object.elements3.push_back({elem[0], elem[2], elem[3]});
-            }
-            else if (elem.size() == 3)
-                object.elements3.push_back({elem[0], elem[1], elem[2]});
-            else
-            {
-                std::cerr << "Weird situation! f elements size is not 3 or 4." << std::endl;
-                return object;
-            }
+            faces.push_back(f);
         }
         else if (type == "l")
         {
@@ -205,12 +187,63 @@ ObjData loadObject(const std::string prefix, const std::string objFileName)
     }
 
     object.nVertices = object.vertices.size();
+
+    std::vector<std::vector<glm::vec3>> sNormals(object.nVertices);
+
+    for (auto f : faces)
+    {
+        // case by case?
+        std::vector<GLuint> elem;
+
+        std::regex re("\\d+/\\d+/\\d+");
+        auto start = std::sregex_iterator(f.begin(), f.end(), re);
+        auto end = std::sregex_iterator();
+        while (start != end)
+        {
+            std::string str = start->str();
+            GLuint vertex = std::stoi(str.substr(0, str.find('/'))) - 1;
+            elem.push_back(vertex);
+
+            GLuint normal = std::stoi(str.substr(str.find_last_of('/') + 1)) - 1;
+            sNormals[vertex].push_back(object.normals[normal]);
+
+            start++;
+        }
+
+        if (elem.size() == 4)
+        {
+            object.elements4.push_back({elem[0], elem[1], elem[2], elem[3]});
+            object.elements3.push_back({elem[0], elem[1], elem[2]});
+            object.elements3.push_back({elem[0], elem[2], elem[3]});
+        }
+        else if (elem.size() == 3)
+            object.elements3.push_back({elem[0], elem[1], elem[2]});
+        else
+        {
+            std::cerr << "Weird situation! f elements size is not 3 or 4." << std::endl;
+            return object;
+        }
+    }
+
+    for (auto sn : sNormals)
+    {
+        glm::vec3 sum(0);
+        for (auto n : sn)
+            sum += n;
+        sum /= sn.size();
+        object.syncedNormals.push_back(sum);
+    }
+
     object.nElements3 = object.elements3.size();
     object.nElements4 = object.elements4.size();
+    object.nNormals = object.normals.size();
+    object.nSyncedNormals = object.syncedNormals.size();
 
     std::cout << "nVertices: " << object.nVertices << std::endl;
     std::cout << "nElements3: " << object.nElements3 << std::endl;
     std::cout << "nElements4: " << object.nElements4 << std::endl;
+    std::cout << "nNormals: " << object.nNormals << std::endl;
+    std::cout << "nSyncedNormals: " << object.nSyncedNormals << std::endl;
 
     file.close();
 

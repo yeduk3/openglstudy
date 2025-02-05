@@ -101,20 +101,37 @@ namespace utah
     float intensityDelta = 10;
     bool lightTurn = false;
     glm::vec3 lightPosition(10, 10, 5);
+    float shininess = 12;
+    float shininessDelta = 10;
 
     void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
         if (key == GLFW_KEY_UP && action == GLFW_PRESS)
         {
             lightIntensity += intensityDelta;
+            std::cout << "lightIntensity: " << lightIntensity << std::endl;
         }
         else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
         {
-            lightIntensity -= intensityDelta;
+            if (lightIntensity > intensityDelta)
+                lightIntensity -= intensityDelta;
+            std::cout << "lightIntensity: " << lightIntensity << std::endl;
+        }
+        else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+        {
+            shininess += shininessDelta;
+            std::cout << "shininess: " << shininess << std::endl;
+        }
+        else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+        {
+            if (shininess > shininessDelta)
+                shininess -= shininessDelta;
+            std::cout << "shininess: " << shininess << std::endl;
         }
         else if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
         {
             lightTurn = !lightTurn;
+            std::cout << "lightPosition: (" << lightPosition.r << ", " << lightPosition.g << ", " << lightPosition.b << ")" << std::endl;
         }
     }
 
@@ -146,7 +163,7 @@ namespace utah
         // normal
         glGenBuffers(1, &vertexNormalBufferObject);
         glBindBuffer(GL_ARRAY_BUFFER, vertexNormalBufferObject);
-        glBufferData(GL_ARRAY_BUFFER, object.normals.size() * sizeof(glm::vec3), object.normals.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, object.nSyncedNormals * sizeof(glm::vec3), object.syncedNormals.data(), GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
@@ -212,7 +229,6 @@ namespace utah
         glm::vec3 ambientColor = object.materialData.begin()->ambientColor;
         glm::vec3 specularColor = object.materialData.begin()->specularColor;
         glm::vec3 diffuseColor = object.materialData.begin()->diffuseColor;
-        float shininess = 1.4;
 
         glUniform3fv(eyePositionLoc, 1, glm::value_ptr(eyePosition));
         glUniform3fv(lightColorLoc, 1, glm::value_ptr(lightColor));
