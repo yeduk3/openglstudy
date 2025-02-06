@@ -44,6 +44,8 @@ Each header file has different namespace. You can test any of them by changing s
 
 - `B`: Switch shading between **Phong lighting** and **Blinn-Phong lighting**.
 
+- `G`: Toggle `Gamma Correction`.
+
 ## parallel_projection_test.hpp
 
 - `Left Click`: Switch projection method between **Perspective** and **Parallel**.

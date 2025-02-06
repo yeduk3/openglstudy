@@ -108,6 +108,8 @@ namespace utah
     float shininessDelta = 10;
     // B
     bool blinnPhong = false;
+    // G
+    bool gammaCorrection = true;
 
     void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
@@ -145,6 +147,14 @@ namespace utah
                 std::cout << "Blinn-Phong Model Activated" << std::endl;
             else
                 std::cout << "Phong Model Activated" << std::endl;
+        }
+        else if (key == GLFW_KEY_G && action == GLFW_PRESS)
+        {
+            gammaCorrection = !gammaCorrection;
+            if (gammaCorrection)
+                std::cout << "gammaCorrection Activated" << std::endl;
+            else
+                std::cout << "gammaCorrection Deactivated" << std::endl;
         }
     }
 
@@ -233,6 +243,7 @@ namespace utah
         GLuint shininessLoc = glGetUniformLocation(program.programID, "shininess");
 
         GLuint blinnPhongLoc = glGetUniformLocation(program.programID, "blinnPhong");
+        GLuint gammaCorrectionLoc = glGetUniformLocation(program.programID, "gammaCorrection");
 
         glm::vec3 lightColor(lightIntensity);
         if (lightTurn)
@@ -254,6 +265,7 @@ namespace utah
         glUniform1f(shininessLoc, shininess);
 
         glUniform1i(blinnPhongLoc, blinnPhong);
+        glUniform1i(gammaCorrectionLoc, gammaCorrection);
 
         // elements.size() * elements[0].size();
         glDrawElements(GL_TRIANGLES, object.nElements3 * 3, GL_UNSIGNED_SHORT, 0);

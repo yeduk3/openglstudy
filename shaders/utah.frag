@@ -10,7 +10,9 @@ uniform vec3 ambientColor;
 uniform vec3 diffuseColor;
 uniform vec3 specularColor;
 uniform float shininess;
+
 uniform bool blinnPhong;
+uniform bool gammaCorrection;
 
 out vec4 out_Color;
 void main() {
@@ -35,6 +37,9 @@ void main() {
         specular = I * specularColor * pow(max(dot(R, V), 0), shininess);
 
     vec3 color = ambient + diffuse + specular;
+
+    if(gammaCorrection)
+        color = pow(color, vec3(1/2.2f));
 
     out_Color = vec4(color, 1);
 }
